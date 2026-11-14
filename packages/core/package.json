@@ -1,0 +1,47 @@
+{
+  "name": "@storeenv/core",
+  "version": "0.1.0",
+  "description": "Shared StoreEnv logic: env parsing, classification, encryption, identity, scopes",
+  "type": "module",
+  "author": "tusharrr0302",
+  "license": "Apache-2.0",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@noble/ciphers": "^2.0.0",
+    "@noble/curves": "^2.0.0",
+    "@noble/hashes": "^2.0.0",
+    "@scure/bip39": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tusharrr0302/storeenv-cli.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://storeenv.app",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "keywords": [
+    "env",
+    "dotenv",
+    "secrets",
+    "encryption",
+    "x25519",
+    "aes-gcm"
+  ],
+  "devDependencies": {
+    "dotenv": "^17.4.2"
+  }
+}

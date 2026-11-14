@@ -1,0 +1,25 @@
+# Gitleaks settings for the StoreEnv client. Default rules, plus one
+# exception: the protocol test vectors hold public keys, signatures and an
+# authentication tag computed from documented test only inputs
+# (packages/core/test/vectors/build.js). They are allowed only in that file
+# and only as these exact values, so anything else there is still reported.
+title = "storeenv-client"
+
+[extend]
+useDefault = true
+
+# The public protocol test vectors: public keys and signatures computed from
+# documented test only inputs (packages/core/test/vectors/build.js). Allowed
+# only in that file and only for these exact values.
+[[allowlists]]
+description = "Protocol test vectors"
+condition = "AND"
+paths = [
+  '''^packages/core/test/vectors/vectors\.json$''',
+]
+regexTarget = "secret"
+regexes = [
+  '''^JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=$''',
+  '''^e0MmQntauytPaGXQDaZxTA==$''',
+  '''^zaMMF\+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=$''',
+]

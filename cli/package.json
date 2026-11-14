@@ -1,0 +1,61 @@
+{
+  "name": "storeenv-cli",
+  "version": "0.2.0",
+  "description": "Git for .env files: push, pull, version and share environment secrets, end to end encrypted on your device",
+  "type": "module",
+  "author": "tusharrr0302",
+  "license": "Apache-2.0",
+  "bin": {
+    "storeenv": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run build && node scripts/smoke.js dist/index.js",
+    "test": "node --test --test-concurrency=1",
+    "build:binary": "node scripts/build-binary.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "keywords": [
+    "env",
+    "dotenv",
+    ".env",
+    "secrets",
+    "secret-management",
+    "environment-variables",
+    "encryption",
+    "end-to-end-encryption",
+    "e2ee",
+    "cli",
+    "git",
+    "devops",
+    "team"
+  ],
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "open": "^11.0.0",
+    "yargs": "^18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tusharrr0302/storeenv-cli.git",
+    "directory": "cli"
+  },
+  "homepage": "https://storeenv.app/docs",
+  "bugs": {
+    "url": "https://github.com/tusharrr0302/storeenv-cli/issues",
+    "email": "hello@storeenv.app"
+  },
+  "devDependencies": {
+    "@storeenv/core": "^0.1.0",
+    "esbuild": "^0.25.0",
+    "postject": "^1.0.0-alpha.6"
+  }
+}

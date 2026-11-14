@@ -1,0 +1,145 @@
+{
+  "note": "StoreEnv protocol test vectors. Test only inputs; nothing here is a real key.",
+  "canonical": {
+    "domain": "storeenv/example/v1",
+    "fields": [
+      "a",
+      "",
+      null,
+      42,
+      "ünï"
+    ],
+    "hex": "0000001373746f7265656e762f6578616d706c652f7631000000016100000000ffffffff00000002343200000005c3bc6ec3af"
+  },
+  "keys": {
+    "phraseEntropyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "phrase": "abandon amount liar amount expire adjust cage candy arch gather drum bullet absurd math era live bid rhythm alien crouch range attend journey unaware",
+    "identityPublicKey": "OmiZZRo9k09aX43g6fDfHmFzvnklgwPi+H+bveKhjEc=",
+    "identityFingerprint": "SE:0440-D770-9943",
+    "accountSigningPublicKey": "zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=",
+    "accountSigningKeyId": "SIG:E4A6-1D88-1982",
+    "deviceSigningSeedHex": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+    "deviceSigningPublicKey": "JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=",
+    "logSeedHex": "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f",
+    "logPublicKey": "zRSzf5VulTGU/3+3Oz2B3MVh1hp1OAlLfD4aZD7l86o="
+  },
+  "accountBinding": {
+    "userId": "usr_vector",
+    "publicKey": "OmiZZRo9k09aX43g6fDfHmFzvnklgwPi+H+bveKhjEc=",
+    "accountKey": "zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=",
+    "signature": "Njelb0GCddDA160gf87sdwI2dxgMayBlapSYleDTCBHEOu4tB2mYrrRF75pM9zQRp5qWa7vTCdUg4XSeFB+cBQ==",
+    "identityProof": "orqduLpsZBs0jXWkL/vs1hAoKa1m9ZvsbZQ5wrhD294hReiyAWnQgjHq2XLHLABwyHDlBE29j7iQS8OVa/6EBg=="
+  },
+  "deviceCertificate": {
+    "userId": "usr_vector",
+    "accountKey": "zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=",
+    "deviceKey": "JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=",
+    "deviceName": "laptop",
+    "issuer": "zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=",
+    "issuedAt": "2026-01-01T00:00:00.000Z",
+    "signature": "9rwZMMMUeHyapXNT7rcNwJ9nXljuuK7maRGi0WZCP7W+zY6HExzL0pX2qlBiUoo0zu6zm8lBifKnMuzVCQIXDQ=="
+  },
+  "deviceRevocation": {
+    "userId": "usr_vector",
+    "accountKey": "zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=",
+    "deviceKey": "JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=",
+    "issuer": "zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=",
+    "revokedAt": "2026-01-01T00:00:00.000Z",
+    "signature": "od9I8n04Z5giHROns698Uw8zpfVQ7ZCbSJ4gqnQQjAsiEqAbqd76W/ZVLDMweFYBHMWI+AIwKY1exnD0OYkSCg=="
+  },
+  "secret": {
+    "esk": "oKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr8=",
+    "value": "postgres://example.invalid/db",
+    "aad": "prj_vector|production|api|DATABASE_URL|3",
+    "iv": "wMHCw8TFxsfIycrL",
+    "ciphertext": "TGA77k6vkfGJNPa/y0s7wIitbnUoZkDgGC4V0IMdIIQQNC9hKzKJH3x4ABX7Jb73fFDvSEEeuVrdsM/5080ggA==",
+    "authTag": "e0MmQntauytPaGXQDaZxTA==",
+    "alg": "AES-256-GCM/X25519-HKDF-v1"
+  },
+  "entry": {
+    "id": "ent_vector",
+    "name": "DATABASE_URL",
+    "rev": 3,
+    "alg": "AES-256-GCM/X25519-HKDF-v1",
+    "aad": "prj_vector|production|api|DATABASE_URL|3",
+    "iv": "wMHCw8TFxsfIycrL",
+    "ciphertext": "TGA77k6vkfGJNPa/y0s7wIitbnUoZkDgGC4V0IMdIIQQNC9hKzKJH3x4ABX7Jb73fFDvSEEeuVrdsM/5080ggA==",
+    "authTag": "e0MmQntauytPaGXQDaZxTA==",
+    "signerUserId": "usr_vector",
+    "signerKey": "JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=",
+    "signature": "TiqfJnSjXuKdhrTDxWohQeChaN3PtYVesPmDtfv3hgGM7aHrOsE1BFyrC6A2u3iNDfqrNzLrWbtQIXLzdcqQAg==",
+    "projectId": "prj_vector",
+    "environment": "production",
+    "service": "api"
+  },
+  "file": {
+    "service": "api",
+    "path": "api/.env",
+    "entryIds": [
+      "ent_vector"
+    ],
+    "digest": "378721545395c96376b4c0412be26b3907e1919cee1fe8fa231553d43233cd73"
+  },
+  "version": {
+    "id": "ver_vector",
+    "parent": null,
+    "projectId": "prj_vector",
+    "environment": "production",
+    "kind": "push",
+    "manifest": [
+      "378721545395c96376b4c0412be26b3907e1919cee1fe8fa231553d43233cd73"
+    ],
+    "signerUserId": "usr_vector",
+    "signerKey": "JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=",
+    "signature": "u4ihxM031YmJHekhM4oJTX768O0Mm6/XkRBGm1iXLO02lapC9Hm4LRj1zY2qSjMaqaaeOkRWFzJnyRWP2pivCg=="
+  },
+  "keyLog": {
+    "leaves": [
+      {
+        "index": 0,
+        "userId": "usr_vector",
+        "login": "vector",
+        "event": "key.registered",
+        "publicKey": "OmiZZRo9k09aX43g6fDfHmFzvnklgwPi+H+bveKhjEc=",
+        "fingerprint": "SE:0440-D770-9943",
+        "at": "2026-01-01T00:00:00.000Z"
+      },
+      {
+        "index": 1,
+        "userId": "usr_vector",
+        "login": "vector",
+        "event": "signing.registered",
+        "publicKey": null,
+        "fingerprint": null,
+        "at": "2026-01-01T00:00:00.000Z",
+        "payload": "{\"accountKey\":\"zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=\"}"
+      },
+      {
+        "index": 2,
+        "userId": "usr_vector",
+        "login": "vector",
+        "event": "device.added",
+        "publicKey": null,
+        "fingerprint": null,
+        "at": "2026-01-01T00:00:00.000Z",
+        "payload": "{\"userId\":\"usr_vector\",\"accountKey\":\"zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=\",\"deviceKey\":\"JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=\",\"deviceName\":\"laptop\",\"issuer\":\"zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=\",\"issuedAt\":\"2026-01-01T00:00:00.000Z\",\"signature\":\"9rwZMMMUeHyapXNT7rcNwJ9nXljuuK7maRGi0WZCP7W+zY6HExzL0pX2qlBiUoo0zu6zm8lBifKnMuzVCQIXDQ==\"}"
+      }
+    ],
+    "leafEncodings": [
+      "[\"storeenv-key-log-v1\",0,\"usr_vector\",\"vector\",\"key.registered\",\"OmiZZRo9k09aX43g6fDfHmFzvnklgwPi+H+bveKhjEc=\",\"SE:0440-D770-9943\",\"2026-01-01T00:00:00.000Z\"]",
+      "[\"storeenv-key-log-v2\",1,\"usr_vector\",\"vector\",\"signing.registered\",null,null,\"2026-01-01T00:00:00.000Z\",\"{\\\"accountKey\\\":\\\"zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=\\\"}\"]",
+      "[\"storeenv-key-log-v2\",2,\"usr_vector\",\"vector\",\"device.added\",null,null,\"2026-01-01T00:00:00.000Z\",\"{\\\"userId\\\":\\\"usr_vector\\\",\\\"accountKey\\\":\\\"zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=\\\",\\\"deviceKey\\\":\\\"JUO5L/EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0=\\\",\\\"deviceName\\\":\\\"laptop\\\",\\\"issuer\\\":\\\"zaMMF+i2UB14dUPXQtSBQFCFkos6A1N8Hs5N0lYA908=\\\",\\\"issuedAt\\\":\\\"2026-01-01T00:00:00.000Z\\\",\\\"signature\\\":\\\"9rwZMMMUeHyapXNT7rcNwJ9nXljuuK7maRGi0WZCP7W+zY6HExzL0pX2qlBiUoo0zu6zm8lBifKnMuzVCQIXDQ==\\\"}\"]"
+    ],
+    "leafHashesHex": [
+      "9a19ea13741d656e98ecb0c52a456d717cd5913de587e0d323a1729f214c5a58",
+      "73d326802741d4849dc5d6d68918e5a2e940a0f44640872ea0e8e7d3469414a9",
+      "551585d57b06301d4222e04b07871f9957c68a1c93fd3f2cacc514ead68fb01a"
+    ],
+    "head": {
+      "size": 3,
+      "root": "+4Vwwrrd9RFJea0oycUqfQ8H+aKsOwlQXEbuIAwp+J4=",
+      "at": "2026-01-01T00:00:00.000Z",
+      "signature": "JARnE1B2xrTGDSrA4oP1dDdjHXG3Is8kLxIYjwJogzQ1hf8f/aMDEESGt3/4dLp8Jignpx5n31AGvX7ybrUXAg=="
+    }
+  }
+}

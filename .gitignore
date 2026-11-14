@@ -1,0 +1,8 @@
+node_modules/
+dist/
+cli/bin/
+.env
+.env.*
+!.env.example
+*.storeenv-backup
+.DS_Store

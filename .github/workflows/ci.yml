@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# Read only. CI never publishes and holds no secrets; pull requests from
+# forks run with the same read only token.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      # @storeenv/core, including the protocol test vectors.
+      - run: npm test --workspace packages/core
+      # The CLI bundle, then offline checks of it. The CLI's integration
+      # suite needs the StoreEnv API and runs in the development repository.
+      - run: npm run build --workspace cli
+      - run: node cli/scripts/smoke.js cli/dist/index.js
