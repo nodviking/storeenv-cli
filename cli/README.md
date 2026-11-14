@@ -74,8 +74,9 @@ To uninstall, delete `~/.storeenv/bin/storeenv` (or the binary in the folder you
 ## Quick start
 
 ```bash
-storeenv login          # sign in with GitHub in the browser
-cd my-project           # any Git repository
+storeenv login          # sign in (or create an account) in the browser
+cd my-project           # any folder with a .env file, Git or not
+storeenv init           # create the project and write .storeenv.json
 storeenv push           # encrypt and upload every .env file
 ```
 
@@ -102,7 +103,7 @@ StoreEnv finds env files in your repository and sorts them by **service** (the f
 
 - `.env.example` and other template files are never uploaded. StoreEnv generates a template with key names (and no values) for your team.
 - `node_modules`, `.git`, `dist` and `.next` are skipped.
-- The project is linked to your Git remote, so everyone who clones the repository lands in the same project. Private repositories need the StoreEnv GitHub App installed once; the CLI tells you when.
+- The project's id lives in `.storeenv.json`. Commit it, and everyone who clones the code lands in the same project. Remotes on any host can be linked as optional hints; for private repositories on GitHub, the StoreEnv GitHub App can verify a link, and the CLI tells you when.
 - `production` is protected by default. Only members with production access can read it.
 
 ## Everyday commands
@@ -156,7 +157,7 @@ A rollback creates a new version equal to the old one, so history is never rewri
 
 ## Sharing with your team
 
-Invite people by GitHub username or email, with exactly the access they need:
+Invite people by email or StoreEnv username, with exactly the access they need:
 
 ```bash
 storeenv invite @neha --role editor

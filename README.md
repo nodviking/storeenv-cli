@@ -2,6 +2,18 @@
 
 The `storeenv` command line tool and `@storeenv/core`, the library it is built on. StoreEnv stores, versions and shares `.env` files: values are encrypted on your device before upload, and each value is signed by the device that wrote it, so the client can check who wrote a value before using it.
 
+If you know Git, you know StoreEnv:
+
+| Git | StoreEnv |
+| --- | --- |
+| Repository | Project (namespace/name, its own id in a committed `.storeenv.json`) |
+| Remote | Optional link: GitHub, GitLab, Gitea or any host, or none |
+| Folder | Service (`frontend/`, `backend/`, root) |
+| Branch | Environment, picked by an optional branch rule |
+| Commit | Signed version (author, message, changed keys) |
+| Submodule / dependency | Import from a library or another project |
+| `push / pull / clone` | `storeenv push / pull / init` |
+
 | Folder | What it is |
 | --- | --- |
 | `packages/core` | Encryption, key derivation, writer signatures, key log verification, `.env` parsing. Includes the protocol test vectors (`packages/core/test/vectors`) |

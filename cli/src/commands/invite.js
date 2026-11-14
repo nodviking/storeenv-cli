@@ -4,7 +4,7 @@ import { scopesFromFlags } from "../services/scopes.js";
 import { openProject } from "../services/session.js";
 
 export const command = "invite <users..>";
-export const describe = "Invite GitHub users or email addresses with a role and scope";
+export const describe = "Invite people by email or StoreEnv username, with a role and scope";
 export const builder = (yargs) =>
   yargs
     .positional("users", { type: "string", array: true, describe: "@username or email" })

@@ -26,7 +26,7 @@ export const handler = async (argv) => {
     },
   });
   const { user } = session;
-  success(`Signed in as ${bold(`@${user.login}`)} (GitHub)`);
+  success(`Signed in as ${bold(`@${user.login}`)}`);
   setResult({ user: { login: user.login }, device: session.device.name });
 
   // Already enrolled on this machine with the same identity.

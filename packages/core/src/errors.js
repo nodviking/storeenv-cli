@@ -41,6 +41,7 @@ export const ERRORS = {
   SE_NETWORK: { exit: 60, status: 503, message: "Can't reach StoreEnv.", hint: "Check your connection or proxy, then run: storeenv doctor" },
   SE_CHALLENGE_REQUIRED: { exit: 60, status: 429, message: "Solve the check and try again.", hint: "The web app solves it for you; retry the sign in" },
   SE_RATE_LIMITED: { exit: 60, status: 429, message: "Too many requests.", hint: "Retry after the time shown" },
+  SE_EMAIL_FAILED: { exit: 60, status: 503, message: "We couldn't send the email. Try again in a few minutes.", hint: "If it keeps failing, write to hello@storeenv.app" },
   SE_SERVER: { exit: 70, status: 500, message: "Something went wrong on our side.", hint: "Retry, and include the request id if it keeps happening" },
   SE_NOT_FOUND: { exit: 44, status: 404, message: "Not found.", hint: "Check the name, or ask a member for access" },
   SE_INVALID: { exit: 22, status: 400, message: "The request is invalid.", hint: "Check the values you passed" },
