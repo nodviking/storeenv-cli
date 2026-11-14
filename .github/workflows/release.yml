@@ -162,17 +162,19 @@ jobs:
           rm publish-check.log
       # The version goes to npm staged, not public: a maintainer approves it
       # with two factor authentication (npm stage approve <id>). --provenance
-      # makes npm fail instead of staging without provenance.
+      # makes npm fail instead of staging without provenance. The bundle was
+      # built and checked in the step before, so lifecycle scripts are
+      # skipped and stdout holds only npm's JSON (in 0.2.2 their output
+      # broke reading the id); scripts/stage-id.js reads it either way.
       - name: Stage on npm with provenance
         id: stage
         working-directory: cli
         run: |
           set -euo pipefail
           version="$(node -p "require('./package.json').version")"
-          npm stage publish --provenance --access public --json > stage.json
+          npm stage publish --provenance --access public --json --ignore-scripts > stage.json
           cat stage.json
-          id="$(node -e 'const find = (o) => (o && typeof o === "object" ? o.stageId || Object.values(o).map(find).find(Boolean) : null); process.stdout.write(String(find(require("./stage.json")) || ""))')"
-          [ -n "$id" ] || { echo "npm returned no stage id"; exit 1; }
+          id="$(node scripts/stage-id.js stage.json)"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "stage-id=$id" >> "$GITHUB_OUTPUT"
           {
