@@ -1,0 +1,171 @@
+# Releases the StoreEnv CLI from this public repository, so the published
+# source is the source of the binaries and of the npm package.
+#
+#   git tag cli-v0.2.0 && git push origin cli-v0.2.0
+#
+# Every release:
+#   1. builds the 5 standalone binaries and runs the CLI suite on the Linux
+#      binary and on the npm bundle;
+#   2. waits for approval in the "release" environment (required reviewer);
+#   3. attests build provenance for every archive (public Sigstore, Rekor)
+#      and verifies each attestation;
+#   4. publishes to npm with provenance by trusted publishing (no npm token);
+#   5. updates the Homebrew formula and publishes the binaries as a release
+#      of the tap repository, where install.sh, install.ps1 and the formula
+#      download them (owner decision R7 may move them here later).
+# A failure at any step stops everything after it.
+#
+# Setup by the owner: protect cli-v* tags; create the "release" environment
+# with the owner as required reviewer; on npmjs.com add this repository,
+# workflow release.yml and environment release as trusted publisher of
+# storeenv-cli; add HOMEBREW_TAP_TOKEN (fine grained, Contents read and
+# write on the tap repository only) to the release environment.
+# Users verify a downloaded archive, wherever it came from, with:
+#   gh attestation verify storeenv-<target>.tar.gz --repo <this repository>
+
+name: CLI release
+
+on:
+  push:
+    tags: ["cli-v*"]
+
+permissions:
+  contents: read
+
+env:
+  TAP_REPO: tusharrr0302/homebrew-storeenv
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { target: darwin-arm64, runner: macos-15 }
+          - { target: darwin-x64, runner: macos-15-intel }
+          - { target: linux-x64, runner: ubuntu-24.04 }
+          - { target: linux-arm64, runner: ubuntu-24.04-arm }
+          - { target: windows-x64, runner: windows-2025 }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Check the tag matches cli/package.json
+        shell: bash
+        run: |
+          version="$(node -p "require('./cli/package.json').version")"
+          [ "${GITHUB_REF_NAME#cli-v}" = "$version" ] || { echo "Tag $GITHUB_REF_NAME does not match cli/package.json $version"; exit 1; }
+      - run: node cli/scripts/build-binary.js --archive
+      - uses: actions/upload-artifact@v4
+        with:
+          name: storeenv-${{ matrix.target }}
+          path: |
+            cli/bin/storeenv-*.tar.gz
+            cli/bin/storeenv-*.zip
+            cli/bin/storeenv-*.sha256
+          if-no-files-found: error
+
+  test:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: storeenv-linux-x64
+          path: artifact
+      - run: tar -xzf artifact/storeenv-linux-x64.tar.gz -C artifact
+      # Core and its protocol vectors, then offline checks of the released
+      # binary and of the npm bundle. The CLI's integration suite needs the
+      # StoreEnv API and runs on the private commit before each export.
+      - run: npm test --workspace packages/core
+      - run: node cli/scripts/smoke.js artifact/storeenv
+      - run: npm run build --workspace cli
+      - run: node cli/scripts/smoke.js cli/dist/index.js
+
+  publish:
+    needs: [build, test]
+    runs-on: ubuntu-24.04
+    # A person approves every release here before anything is attested or published.
+    environment: release
+    permissions:
+      contents: read
+      id-token: write # attestations and npm trusted publishing
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/storeenv-*.tar.gz
+            dist/storeenv-*.zip
+      - name: Verify the attestations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          count=0
+          for file in dist/storeenv-*.tar.gz dist/storeenv-*.zip; do
+            gh attestation verify "$file" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml"
+            count=$((count + 1))
+          done
+          [ "$count" -eq 5 ] || { echo "Expected 5 archives, found $count"; exit 1; }
+      # --provenance makes npm fail instead of publishing without provenance.
+      - name: Publish to npm with provenance
+        working-directory: cli
+        run: npm publish --provenance --access public
+      - name: Check npm recorded the provenance
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./cli/package.json').version")"
+          for _ in 1 2 3 4 5 6; do
+            url="$(npm view "storeenv-cli@$version" dist.attestations.url 2>/dev/null || true)"
+            [ -n "$url" ] && { echo "provenance: $url"; exit 0; }
+            sleep 10
+          done
+          echo "npm shows no provenance for storeenv-cli@$version"; exit 1
+      - name: Update the Homebrew formula
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./cli/package.json').version")"
+          node cli/scripts/homebrew-formula.js "$version" dist > storeenv.rb
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${TAP_REPO}.git" tap
+          cd tap
+          git config user.name "tusharrr0302"
+          git config user.email "tusharrr0302@users.noreply.github.com"
+          mkdir -p Formula && cp ../storeenv.rb Formula/storeenv.rb
+          git add Formula/storeenv.rb
+          if git diff --cached --quiet; then echo "Formula already up to date"; else git commit -m "storeenv $version" && git push origin HEAD; fi
+      - name: Publish the binaries
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./cli/package.json').version")"
+          cat dist/*.sha256 > dist/checksums.txt
+          gh release create "v$version" --repo "$TAP_REPO" --target main --title "StoreEnv CLI $version" \
+            --notes "Built from $GITHUB_REPOSITORY@$GITHUB_SHA. Verify: gh attestation verify <archive> --repo $GITHUB_REPOSITORY" \
+            dist/*.tar.gz dist/*.zip dist/*.sha256 dist/checksums.txt
