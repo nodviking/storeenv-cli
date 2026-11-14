@@ -1,12 +1,12 @@
 {
   "name": "storeenv-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Git for .env files: push, pull, version and share environment secrets, end to end encrypted on your device",
   "type": "module",
   "author": "tusharrr0302",
   "license": "Apache-2.0",
   "bin": {
-    "storeenv": "./dist/index.js"
+    "storeenv": "dist/index.js"
   },
   "files": [
     "dist",
@@ -45,7 +45,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tusharrr0302/storeenv-cli.git",
+    "url": "https://github.com/tusharrr0302/storeenv-cli",
     "directory": "cli"
   },
   "homepage": "https://storeenv.app/docs",

@@ -108,7 +108,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          registry-url: "https://registry.npmjs.org"
+          # No registry-url: it writes an .npmrc with an _authToken line and a
+          # placeholder NODE_AUTH_TOKEN. Trusted publishing uses OIDC only.
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
@@ -131,6 +132,30 @@ jobs:
             count=$((count + 1))
           done
           [ "$count" -eq 5 ] || { echo "Expected 5 archives, found $count"; exit 1; }
+      # Trusted publishing needs npm 11.5.1 or later and must not meet a
+      # token: fail if any token variable or _authToken line is in reach,
+      # and print the effective configuration (npm redacts secrets).
+      - name: Check npm for trusted publishing
+        run: |
+          set -euo pipefail
+          version="$(npm -v)"
+          echo "npm $version"
+          node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); if (a < 11 || (a === 11 && (b < 5 || (b === 5 && c < 1)))) { console.error("npm 11.5.1 or later is needed for trusted publishing"); process.exit(1); }' "$version"
+          if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ]; then echo "A token variable reaches the publish step"; exit 1; fi
+          for file in "$(npm config get userconfig)" "$(npm config get globalconfig)" .npmrc cli/.npmrc; do
+            if [ -f "$file" ] && grep -q "_authToken" "$file"; then echo "_authToken found in $file"; exit 1; fi
+          done
+          npm config list
+      # npm reads the bin path before prepublishOnly builds the bundle. Build
+      # first, then fail on any bin warning from a dry run, so a package
+      # without its storeenv command can't be published.
+      - name: Build the npm package and check its command
+        working-directory: cli
+        run: |
+          npm run build
+          npm publish --dry-run 2> publish-check.log || { cat publish-check.log; exit 1; }
+          if grep -qiE "No bin file|invalid and removed" publish-check.log; then cat publish-check.log; exit 1; fi
+          rm publish-check.log
       # --provenance makes npm fail instead of publishing without provenance.
       - name: Publish to npm with provenance
         working-directory: cli

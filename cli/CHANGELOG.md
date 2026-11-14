@@ -1,0 +1,21 @@
+# Changelog
+
+## 0.2.1
+
+First release from the public repository, with build provenance on every archive and npm provenance.
+
+- Writer signatures: values are signed by the device that wrote them and checked before use; `run` and `copy` refuse unsigned or untrusted values.
+- `storeenv sign`, `trust`, `verify`, `keys signing-setup`; `doctor` checks the key log and this device's signing state.
+- `--allow-unsigned` needs a typed confirmation on a terminal, or `STOREENV_ALLOW_UNSIGNED=1`.
+- `run` forwards termination signals to the program and reports signal exits as 128 + n.
+- The macOS Keychain receives the device key on standard input, never as a process argument.
+- Shell completion for bash and zsh: `storeenv completion`.
+- Licensed under Apache-2.0 from this version; 0.1.0 and 0.1.1 stay under ISC.
+
+## 0.2.0
+
+Not published. Its release failed before publishing (npm refused the trusted publisher, and the package would have lost its `storeenv` command), so the version was skipped.
+
+## 0.1.1
+
+Earlier release, published under the ISC license.
