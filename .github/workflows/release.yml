@@ -96,12 +96,15 @@ jobs:
   publish:
     needs: [build, test]
     runs-on: ubuntu-24.04
-    # A person approves every release here before anything is attested or published.
+    # A person approves this job before anything is attested or staged.
     environment: release
     permissions:
       contents: read
       id-token: write # attestations and npm trusted publishing
       attestations: write
+    outputs:
+      version: ${{ steps.stage.outputs.version }}
+      stage-id: ${{ steps.stage.outputs.stage-id }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -132,15 +135,16 @@ jobs:
             count=$((count + 1))
           done
           [ "$count" -eq 5 ] || { echo "Expected 5 archives, found $count"; exit 1; }
-      # Trusted publishing needs npm 11.5.1 or later and must not meet a
-      # token: fail if any token variable or _authToken line is in reach,
-      # and print the effective configuration (npm redacts secrets).
-      - name: Check npm for trusted publishing
+      # Staged publishing needs npm 11.15.0 or later, and trusted publishing
+      # must not meet a token: fail if any token variable or _authToken line
+      # is in reach, and print the effective configuration (npm redacts
+      # secrets).
+      - name: Check npm for staged trusted publishing
         run: |
           set -euo pipefail
           version="$(npm -v)"
           echo "npm $version"
-          node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); if (a < 11 || (a === 11 && (b < 5 || (b === 5 && c < 1)))) { console.error("npm 11.5.1 or later is needed for trusted publishing"); process.exit(1); }' "$version"
+          node -e 'const [a, b] = process.argv[1].split(".").map(Number); if (a < 11 || (a === 11 && b < 15)) { console.error("npm 11.15.0 or later is needed for staged publishing"); process.exit(1); }' "$version"
           if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ]; then echo "A token variable reaches the publish step"; exit 1; fi
           for file in "$(npm config get userconfig)" "$(npm config get globalconfig)" .npmrc cli/.npmrc; do
             if [ -f "$file" ] && grep -q "_authToken" "$file"; then echo "_authToken found in $file"; exit 1; fi
@@ -148,7 +152,7 @@ jobs:
           npm config list
       # npm reads the bin path before prepublishOnly builds the bundle. Build
       # first, then fail on any bin warning from a dry run, so a package
-      # without its storeenv command can't be published.
+      # without its storeenv command can't be staged.
       - name: Build the npm package and check its command
         working-directory: cli
         run: |
@@ -156,26 +160,73 @@ jobs:
           npm publish --dry-run 2> publish-check.log || { cat publish-check.log; exit 1; }
           if grep -qiE "No bin file|invalid and removed" publish-check.log; then cat publish-check.log; exit 1; fi
           rm publish-check.log
-      # --provenance makes npm fail instead of publishing without provenance.
-      - name: Publish to npm with provenance
+      # The version goes to npm staged, not public: a maintainer approves it
+      # with two factor authentication (npm stage approve <id>). --provenance
+      # makes npm fail instead of staging without provenance.
+      - name: Stage on npm with provenance
+        id: stage
         working-directory: cli
-        run: npm publish --provenance --access public
-      - name: Check npm recorded the provenance
         run: |
           set -euo pipefail
-          version="$(node -p "require('./cli/package.json').version")"
-          for _ in 1 2 3 4 5 6; do
-            url="$(npm view "storeenv-cli@$version" dist.attestations.url 2>/dev/null || true)"
-            [ -n "$url" ] && { echo "provenance: $url"; exit 0; }
-            sleep 10
+          version="$(node -p "require('./package.json').version")"
+          npm stage publish --provenance --access public --json > stage.json
+          cat stage.json
+          id="$(node -e 'const find = (o) => (o && typeof o === "object" ? o.stageId || Object.values(o).map(find).find(Boolean) : null); process.stdout.write(String(find(require("./stage.json")) || ""))')"
+          [ -n "$id" ] || { echo "npm returned no stage id"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "stage-id=$id" >> "$GITHUB_OUTPUT"
+          {
+            echo "### storeenv-cli@$version is staged on npm"
+            echo
+            echo "Stage id: \`$id\`"
+            echo
+            echo "1. Approve it on npm (needs two factor authentication): \`npm stage approve $id\`"
+            echo "2. Then approve the distribute job, which waits until $version is live on npm before Homebrew and the binaries."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  distribute:
+    needs: publish
+    runs-on: ubuntu-24.04
+    # A person approves this job only after approving the npm stage. Its
+    # first step checks that the version is live on npm, with provenance,
+    # and stops before Homebrew and the binaries otherwise.
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Wait until the npm version is live with provenance
+        env:
+          VERSION: ${{ needs.publish.outputs.version }}
+          STAGE_ID: ${{ needs.publish.outputs.stage-id }}
+        run: |
+          set -euo pipefail
+          for _ in $(seq 1 20); do
+            live="$(npm view "storeenv-cli@$VERSION" version 2>/dev/null || true)"
+            if [ "$live" = "$VERSION" ]; then
+              url="$(npm view "storeenv-cli@$VERSION" dist.attestations.url 2>/dev/null || true)"
+              [ -n "$url" ] || { echo "storeenv-cli@$VERSION is live without provenance"; exit 1; }
+              echo "storeenv-cli@$VERSION is live; provenance: $url"
+              exit 0
+            fi
+            sleep 30
           done
-          echo "npm shows no provenance for storeenv-cli@$version"; exit 1
+          echo "storeenv-cli@$VERSION is not live on npm yet. Approve stage $STAGE_ID (npm stage approve $STAGE_ID), then re-run this job."
+          exit 1
       - name: Update the Homebrew formula
         env:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         run: |
           set -euo pipefail
-          version="$(node -p "require('./cli/package.json').version")"
+          version="${{ needs.publish.outputs.version }}"
           node cli/scripts/homebrew-formula.js "$version" dist > storeenv.rb
           git clone "https://x-access-token:${GH_TOKEN}@github.com/${TAP_REPO}.git" tap
           cd tap
@@ -189,7 +240,7 @@ jobs:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         run: |
           set -euo pipefail
-          version="$(node -p "require('./cli/package.json').version")"
+          version="${{ needs.publish.outputs.version }}"
           cat dist/*.sha256 > dist/checksums.txt
           gh release create "v$version" --repo "$TAP_REPO" --target main --title "StoreEnv CLI $version" \
             --notes "Built from $GITHUB_REPOSITORY@$GITHUB_SHA. Verify: gh attestation verify <archive> --repo $GITHUB_REPOSITORY" \
