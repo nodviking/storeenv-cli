@@ -11,7 +11,7 @@ export const command = "namespaces [action] [handle]";
 export const describe = "Namespaces: list, view, projects, claim, status";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["list", "view", "projects", "claim", "status"], default: "list" })
+    .positional("action", { choices: ["list", "view", "projects", "claim", "status"], default: "list", describe: "list your namespaces, view one, list its projects, claim a name left over from 0.1, or see a claim's status" })
     .positional("handle", { type: "string", describe: "Namespace name" })
     .example("storeenv namespaces view acme", "Who owns acme, and whether it is disputed")
     .example("storeenv namespaces claim acme", "Claim a name left over from StoreEnv 0.1");

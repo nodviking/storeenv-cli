@@ -9,7 +9,7 @@ export const command = "revoke [user]";
 export const describe = "Remove a member's access and re-key what they could read";
 export const builder = (yargs) =>
   yargs
-    .positional("user", { type: "string" })
+    .positional("user", { type: "string", describe: "The member to remove, as @username" })
     .option("resume", { type: "boolean", default: false, describe: "Finish a re-key that is still pending" })
     .option("rotation", { type: "boolean", default: true, describe: "Mark the affected secrets as rotation due" })
     .option("skip-unverified", { type: "boolean", default: false, describe: "Encrypt only for readers whose keys are verified; the rest wait for a key share" });

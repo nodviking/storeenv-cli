@@ -7,8 +7,8 @@ export const command = "grant <user>";
 export const describe = "Change a member's role, scope, expiry or production access";
 export const builder = (yargs) =>
   yargs
-    .positional("user", { type: "string" })
-    .option("role", { choices: ["viewer", "editor", "admin"] })
+    .positional("user", { type: "string", describe: "The member, as @username" })
+    .option("role", { choices: ["viewer", "editor", "admin"], describe: "New role" })
     .option("all", { type: "boolean", default: false, describe: "Grant the whole project" })
     .option("keys", { type: "string", array: true, describe: "Specific secrets: backend/.env.production:DB_HOST,DB_USER" })
     .option("files", { type: "string", array: true, describe: "Whole files: backend/.env.production" })

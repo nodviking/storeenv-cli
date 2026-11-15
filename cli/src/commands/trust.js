@@ -14,7 +14,7 @@ export const command = "trust <action> [login] [fingerprint]";
 export const describe = "Trust writers for this project: trust writer @login SE:XXXX, trust ls, trust rm @login";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["writer", "ls", "rm"] })
+    .positional("action", { choices: ["writer", "ls", "rm"], describe: "writer: trust someone's signed values in this project; ls: list trusted writers; rm: stop trusting one" })
     .positional("login", { type: "string", describe: "@username" })
     .positional("fingerprint", { type: "string", describe: "The fingerprint they read to you (SE:XXXX-XXXX-XXXX)" });
 

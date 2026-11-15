@@ -51,3 +51,5 @@ Report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
 ## License
 
 Copyright 2026 tusharrr0302. Licensed under the Apache License, Version 2.0; see [LICENSE](LICENSE). Versions of `storeenv-cli` published before this repository (0.1.0 and 0.1.1) were released under the ISC license.
+
+If StoreEnv saved you time, you can [buy me a chai](https://buymeatea.in/storeenv) ☕.

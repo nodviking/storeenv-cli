@@ -9,10 +9,10 @@ export const command = "env <action> [name] [new-name]";
 export const describe = "Manage environments: list, use, create, rename, protect, rm";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["ls", "list", "use", "create", "rename", "protect", "unprotect", "rm"] })
+    .positional("action", { choices: ["ls", "list", "use", "create", "rename", "protect", "unprotect", "rm"], describe: "list environments, pick one for this folder (use), or create, rename, protect, unprotect or remove one" })
     .option("clear", { type: "boolean", default: false, describe: "With use: forget the choice for this folder" })
-    .positional("name", { type: "string" })
-    .positional("new-name", { type: "string" })
+    .positional("name", { type: "string", describe: "Environment name" })
+    .positional("new-name", { type: "string", describe: "New name (rename)" })
     .option("protected", { type: "boolean", default: false, describe: "Require production access (create)" });
 
 export const handler = async (argv) => {

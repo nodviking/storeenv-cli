@@ -8,7 +8,7 @@ export const command = "project [action] [value]";
 export const describe = "Show or change this project: show, rename, kind, describe, links, verify-link";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["show", "rename", "kind", "describe", "links", "verify-link"], default: "show" })
+    .positional("action", { choices: ["show", "rename", "kind", "describe", "links", "verify-link"], default: "show", describe: "What to show or change about this project" })
     .positional("value", { type: "string", describe: "New name, kind (app or library), description, or a link id" });
 
 const need = (value, label) => {

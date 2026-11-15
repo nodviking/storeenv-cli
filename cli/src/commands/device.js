@@ -11,7 +11,7 @@ export const command = "device <action> [target]";
 export const describe = "Manage enrolled devices: ls, approve <code>, deny <code>, rm <name>";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["ls", "approve", "deny", "rm"] })
+    .positional("action", { choices: ["ls", "approve", "deny", "rm"], describe: "list devices, approve or deny a new device by its code, or remove one by name" })
     .positional("target", { type: "string", describe: "Approval code or device name" })
     .option("device-key", { type: "string", describe: "The device key shown on the new device (SE:XXXX-XXXX-XXXX)" });
 

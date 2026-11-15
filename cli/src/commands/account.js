@@ -9,7 +9,7 @@ export const command = "account [action] [value]";
 export const describe = "Your account: show, rename <username>, methods";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["show", "rename", "methods"], default: "show" })
+    .positional("action", { choices: ["show", "rename", "methods"], default: "show", describe: "show your account, rename your username, or list your sign in methods" })
     .positional("value", { type: "string", describe: "New username (rename)" });
 
 export const handler = async (argv) => {

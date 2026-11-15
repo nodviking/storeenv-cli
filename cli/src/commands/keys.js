@@ -16,7 +16,7 @@ export const command = "keys [action] [login] [fingerprint]";
 export const describe = "List, verify or forget teammates' public keys; set up this device's signing key (signing-setup)";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["list", "trust", "verify", "forget", "signing-setup", "signing"], default: "list" })
+    .positional("action", { choices: ["list", "trust", "verify", "forget", "signing-setup", "signing"], default: "list", describe: "list teammates' keys, verify (or trust) one by fingerprint, forget one, or set up or show this device's signing key" })
     .positional("login", { type: "string", describe: "@username" })
     .positional("fingerprint", { type: "string", describe: "Their fingerprint, as they read it to you" });
 

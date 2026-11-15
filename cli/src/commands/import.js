@@ -7,8 +7,8 @@ export const command = "import [action] [args..]";
 export const describe = "Import environments from shared library projects: list, add, remove, pin, unpin, enable, disable, move";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["list", "add", "remove", "pin", "unpin", "enable", "disable", "move", "used-by"], default: "list" })
-    .positional("args", { type: "string", array: true })
+    .positional("action", { choices: ["list", "add", "remove", "pin", "unpin", "enable", "disable", "move", "used-by"], default: "list", describe: "What to do with this environment's imports" })
+    .positional("args", { type: "string", array: true, describe: "add: the source project (namespace/name). Other actions: an import id from storeenv import list, then a source version id (pin) or a position, 0 first (move)" })
     .option("from-env", { type: "string", describe: "Source environment (default: the same name as --env)" })
     .option("only", { type: "string", array: true, describe: "Key patterns to import, like STRIPE_* (default: all keys you can read)" })
     .option("pin", { type: "string", describe: "With add: stay on this source version id instead of following the latest" });

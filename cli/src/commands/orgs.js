@@ -10,7 +10,7 @@ export const command = "orgs [action] [org] [login] [role]";
 export const describe = "Organizations: list, create, view, members, add, role, remove, leave, transfer, delete";
 export const builder = (yargs) =>
   yargs
-    .positional("action", { choices: ["list", "create", "view", "members", "add", "role", "remove", "leave", "transfer", "delete"], default: "list" })
+    .positional("action", { choices: ["list", "create", "view", "members", "add", "role", "remove", "leave", "transfer", "delete"], default: "list", describe: "What to do with an organization" })
     .positional("org", { type: "string", describe: "Organization slug" })
     .positional("login", { type: "string", describe: "@username" })
     .positional("role", { type: "string", describe: "admin or member" })

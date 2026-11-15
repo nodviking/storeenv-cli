@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+
+- `storeenv login` says "Signed in as @you" for every sign in method, without naming a provider.
+- Every argument and flag in `storeenv --help` has a description; the docs' CLI reference is generated from the same definitions.
+- `storeenv invite` describes inviting by email or StoreEnv username.
+
 ## 0.2.2
 
 First release from the public repository, with build provenance on every archive and npm provenance. Published to npm as a staged version that a maintainer approves with two factor authentication.

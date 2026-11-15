@@ -8,12 +8,12 @@ export const describe = "Invite people by email or StoreEnv username, with a rol
 export const builder = (yargs) =>
   yargs
     .positional("users", { type: "string", array: true, describe: "@username or email" })
-    .option("role", { choices: ["viewer", "editor", "admin"], default: "viewer" })
+    .option("role", { choices: ["viewer", "editor", "admin"], default: "viewer", describe: "Role in the project" })
     .option("keys", { type: "string", array: true, describe: "Specific secrets: backend/.env.production:DB_HOST,DB_USER" })
     .option("files", { type: "string", array: true, describe: "Whole files: backend/.env.production" })
     .option("expires", { type: "string", describe: "Access expiry: 24h, 7d, 30d" })
     .option("prod", { type: "boolean", default: false, describe: "Give production access (owner only)" })
-    .option("message", { alias: "m", type: "string" });
+    .option("message", { alias: "m", type: "string", describe: "A note included in the invitation" });
 
 export const handler = async (argv) => {
   const { project, settings } = await openProject(argv);
