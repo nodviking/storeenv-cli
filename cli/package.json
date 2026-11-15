@@ -1,6 +1,6 @@
 {
   "name": "storeenv-cli",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Git for .env files: push, pull, version and share environment secrets, end to end encrypted on your device",
   "type": "module",
   "author": "tusharrr0302",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4
+
+- `storeenv init` and `storeenv link` accept long project names and file paths with digits, such as `acme-corp2/payments-service`. They were refused as "looks like a secret"; tokens and provider keys in `.storeenv.json` are still refused.
+
 ## 0.2.3
 
 - `storeenv login` says "Signed in as @you" for every sign in method, without naming a provider.

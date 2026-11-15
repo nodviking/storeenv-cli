@@ -92,6 +92,34 @@ describe(".storeenv.json validation", () => {
   }
 });
 
+// Production, 2026-11-15: init and link refused "storeenv-test2/launch-check"
+// because any value of 24 or more characters with a digit looked like a secret.
+describe(".storeenv.json tells names and paths from secrets", () => {
+  test("long project names and paths with digits are accepted", () => {
+    const { config } = parseProjectConfig(JSON.stringify({
+      name: "storeenv-test2/launch-check",
+      files: { "apps/billing-service2/.env.production": "production", "services/payments-v2/config/.env.staging": "staging" },
+      branches: { "release/2026-11-15/hotfix2": "production" },
+      ignore: ["fixtures/generated-2026-11/large-files"],
+    }));
+    assert.equal(config.name, "storeenv-test2/launch-check");
+  });
+  for (const [label, value] of [
+    ["a live provider key", FAKE_LIVE_KEY],
+    // Built here so the source holds no token shaped strings for scanners.
+    ["a random token", "Zx9Kq2Lm".repeat(4)],
+    ["a token with slashes", ["aB3dEf9GhIjK", "lMnOpQrStUvWxYz0123+Qw=="].join("/")],
+    ["a lower case hex token", "3f9a1c7e5b".repeat(4)],
+    ["a token split by a slash", ["8f4a6c0e9b".repeat(2), "2b4d6f8a3f".repeat(2)].join("/")],
+  ]) {
+    test(`still refuses ${label}`, () => {
+      const [errorCode, message] = code(() => parseProjectConfig(JSON.stringify({ name: "acme/x", ignore: [value] })));
+      assert.equal(errorCode, "SE_CONFIG_INVALID");
+      assert.match(message, /looks like a secret/);
+    });
+  }
+});
+
 describe("environment selection", () => {
   const config = { branches: { main: "production", "release/*": "staging", "release/hotfix/*": "production", "*": "development" } };
 

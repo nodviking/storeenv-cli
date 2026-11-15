@@ -7,7 +7,7 @@
 // caller's job (see serializeProjectConfig).
 
 import { StoreEnvError } from "./errors.js";
-import { looksLikeSecret } from "./scanner.js";
+import { detectProvider, looksLikeSecret } from "./scanner.js";
 
 export const CONFIG_VERSION = 2;
 export const PROJECT_ID = /^prj_[0-9a-f]{24}$/;
@@ -67,11 +67,22 @@ const validateImports = (value) => {
   });
 };
 
+// Project names (namespace/name) and file or branch paths are long and can
+// hold digits, which alone made them look like secrets. A value counts as a
+// name or path only when it is lower case, made of path characters, has a
+// "/" or starts with ".", isn't a provider key, and none of its segments is
+// secret shaped (or a long hex run). Mixed case tokens, base64 and tokens
+// without separators are still refused.
+const HEX_RUN = /^(?=.*[0-9])(?=.*[a-f])[0-9a-f]{16,}$/;
+const isNameOrPath = (text) =>
+  /^[a-z0-9._*/-]+$/.test(text) && (text.includes("/") || text.startsWith(".")) && !detectProvider(text)
+  && text.split("/").every((segment) => !looksLikeSecret(segment) && !HEX_RUN.test(segment));
+
 // Never write anything that looks like a credential into a committed file.
 const assertNoSecrets = (value, where = "") => {
   if (typeof value === "string") {
     // Project ids are long random strings by design, not credentials.
-    if (!PROJECT_ID.test(value) && looksLikeSecret(value)) throw invalid(`${where || "a value"} looks like a secret. .storeenv.json is committed to Git and must never hold secrets.`, "Remove the value");
+    if (!PROJECT_ID.test(value) && !isNameOrPath(value) && looksLikeSecret(value)) throw invalid(`${where || "a value"} looks like a secret. .storeenv.json is committed to Git and must never hold secrets.`, "Remove the value");
   } else if (Array.isArray(value)) value.forEach((item, i) => assertNoSecrets(item, `${where}[${i}]`));
   else if (isObject(value)) {
     for (const [key, item] of Object.entries(value)) {
