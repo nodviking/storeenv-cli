@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Shared StoreEnv logic: env parsing, classification, encryption, identity, scopes",
   "type": "module",
-  "author": "tusharrr0302",
+  "author": "nodviking",
   "license": "Apache-2.0",
   "main": "./src/index.js",
   "exports": {
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tusharrr0302/storeenv-cli",
+    "url": "https://github.com/nodviking/storeenv-cli",
     "directory": "packages/core"
   },
   "homepage": "https://storeenv.app",

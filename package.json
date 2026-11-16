@@ -2,7 +2,7 @@
   "name": "storeenv",
   "private": true,
   "description": "StoreEnv client: the CLI, its shared core, the protocol specification and test vectors",
-  "author": "tusharrr0302",
+  "author": "nodviking",
   "license": "Apache-2.0",
   "workspaces": [
     "packages/*",

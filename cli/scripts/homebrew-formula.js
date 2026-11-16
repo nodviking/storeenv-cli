@@ -7,7 +7,7 @@ import path from "node:path";
 const [version, dir] = process.argv.slice(2);
 if (!version || !dir) throw new Error("Usage: homebrew-formula.js <version> <dir>");
 
-const base = `https://github.com/tusharrr0302/homebrew-storeenv/releases/download/v${version}`;
+const base = `https://github.com/nodviking/homebrew-storeenv/releases/download/v${version}`;
 const sha = (target) => readFileSync(path.join(dir, `storeenv-${target}.tar.gz.sha256`), "utf8").split(/\s+/)[0];
 const block = (target) => `      url "${base}/storeenv-${target}.tar.gz"
       sha256 "${sha(target)}"`;

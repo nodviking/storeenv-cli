@@ -52,7 +52,7 @@ irm https://storeenv.app/install.ps1 | iex
 **Homebrew:**
 
 ```bash
-brew install tusharrr0302/storeenv/storeenv
+brew install nodviking/storeenv/storeenv
 ```
 
 **npm** (needs Node.js 18 or newer):
@@ -263,7 +263,7 @@ Questions or bugs: hello@storeenv.app. Security reports: security@storeenv.app.
 
 ## License
 
-storeenv-cli is under the Apache License, Version 2.0, copyright 2026 tusharrr0302 (see `LICENSE`).
+storeenv-cli is under the Apache License, Version 2.0, copyright 2026 nodviking (see `LICENSE`).
 
 It includes third-party packages that keep their own licenses: the npm package lists the bundled ones in `THIRD_PARTY_NOTICES.md`. The standalone binary also contains the Node.js runtime; its release archives carry `LICENSE`, `THIRD_PARTY_NOTICES.md` and `LICENSE-node.txt`, which `install.sh`, `install.ps1` and Homebrew keep next to the binary (`~/.storeenv/share/storeenv/` for the install scripts).
 

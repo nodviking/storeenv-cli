@@ -33,7 +33,7 @@ permissions:
   contents: read
 
 env:
-  TAP_REPO: tusharrr0302/homebrew-storeenv
+  TAP_REPO: nodviking/homebrew-storeenv
 
 jobs:
   build:
@@ -232,8 +232,8 @@ jobs:
           node cli/scripts/homebrew-formula.js "$version" dist > storeenv.rb
           git clone "https://x-access-token:${GH_TOKEN}@github.com/${TAP_REPO}.git" tap
           cd tap
-          git config user.name "tusharrr0302"
-          git config user.email "tusharrr0302@users.noreply.github.com"
+          git config user.name "nodviking"
+          git config user.email "166697996+nodviking@users.noreply.github.com"
           mkdir -p Formula && cp ../storeenv.rb Formula/storeenv.rb
           git add Formula/storeenv.rb
           if git diff --cached --quiet; then echo "Formula already up to date"; else git commit -m "storeenv $version" && git push origin HEAD; fi

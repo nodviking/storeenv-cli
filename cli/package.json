@@ -3,7 +3,7 @@
   "version": "0.2.4",
   "description": "Git for .env files: push, pull, version and share environment secrets, end to end encrypted on your device",
   "type": "module",
-  "author": "tusharrr0302",
+  "author": "nodviking",
   "license": "Apache-2.0",
   "bin": {
     "storeenv": "dist/index.js"
@@ -45,12 +45,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tusharrr0302/storeenv-cli",
+    "url": "https://github.com/nodviking/storeenv-cli",
     "directory": "cli"
   },
   "homepage": "https://storeenv.app/docs",
   "bugs": {
-    "url": "https://github.com/tusharrr0302/storeenv-cli/issues",
+    "url": "https://github.com/nodviking/storeenv-cli/issues",
     "email": "hello@storeenv.app"
   },
   "devDependencies": {
